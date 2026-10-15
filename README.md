@@ -18,7 +18,9 @@ The plugin is a RustGIS **process plugin**: RustGIS runs `main.py` with Python, 
 
 ## Install
 
-In RustGIS, open **Plugins › Plugin Manager › Settings** and add this folder as a plugin folder, or run `rustgis-cli plugins install /path/to/glimat-rustgis`.
+Download `glimat-<version>.rgplugin` from the [releases](https://github.com/giswqs/glimat-rustgis/releases) and drop it on the RustGIS window, or install it in **Plugins › Plugin Manager › Settings**, or run `rustgis-cli plugins install glimat-<version>.rgplugin`. RustGIS asks before installing it, since it runs as a program on your computer rather than in RustGIS's sandbox.
+
+To run it from a clone instead, add the clone's folder as a plugin folder in **Plugin Manager › Settings**, or run `rustgis-cli plugins install /path/to/glimat-rustgis`.
 
 RustGIS then makes GLIMAT a Python environment of its own, with Python 3.12 and the packages in `requirements.txt`. The desktop app does it in the background and shows the progress in the Plugin Manager; `rustgis-cli` does it before the install returns. You don't need Python installed. The first time downloads about 600 MB. This needs a RustGIS with [plugin Python environments](https://github.com/opengeos/RustGIS/pull/246).
 
@@ -59,6 +61,10 @@ python -m pytest tests        # run the plugin as RustGIS does, on a synthetic m
 ```
 
 GLIMAT's own modules in `glimat/` are left out of the hooks, so they stay identical to the upstream release.
+
+## Releasing
+
+`python scripts/package.py` builds `dist/glimat-<version>.rgplugin` and prints its SHA-256; the same files always give the same package, on any machine. To publish a release, set `version` in `plugin.json`, merge, and push the tag `v<version>`: CI runs the tests, builds the package and attaches it, with its SHA-256, to a GitHub release.
 
 ## Credits and licence
 
