@@ -34,6 +34,116 @@
         { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
         { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
       ]
+    },
+    {
+      "id": "raster-to-nc",
+      "name": "Rasters to NetCDF",
+      "summary": "Converts folders of GeoTIFF or ASCII grid rasters, one per time step, into one NetCDF model output for GLIMAT's tools.",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "thick_folder", "label": "Ice thickness rasters (folder)", "kind": "text", "required": true, "help": "A folder of .tif or .asc files, one per time step, with the time in each name (thk_1000.tif)." },
+        { "name": "output_nc", "label": "Output NetCDF (path)", "kind": "text", "required": true },
+        { "name": "surface_folder", "label": "Surface elevation rasters (folder)", "kind": "text" },
+        { "name": "uvel_folder", "label": "U velocity rasters (folder)", "kind": "text" },
+        { "name": "vvel_folder", "label": "V velocity rasters (folder)", "kind": "text" },
+        { "name": "start", "label": "First time (empty: from the files)", "kind": "number" },
+        { "name": "end", "label": "Last time (empty: from the files)", "kind": "number" },
+        { "name": "step", "label": "Time interval (empty: from the files)", "kind": "number" },
+        { "name": "use_compression", "label": "Compress", "kind": "bool", "default": true }
+      ]
+    },
+    {
+      "id": "stpc",
+      "name": "Point Comparison (STPC)",
+      "summary": "Compares modelled ice surface elevation or thickness with measured values at points, at each time step: RMSE, MAE, mean difference and R².",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "points", "label": "Measured points", "kind": "pointLayer", "required": true },
+        { "name": "value_field", "label": "Measured value field", "kind": "numericField", "required": true },
+        { "name": "variable", "label": "Model variable (usurf: surface elevation, thk: thickness)", "kind": "text", "default": "usurf" },
+        { "name": "id_field", "label": "ID field (one comparison per ID)", "kind": "field" },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "min_ice_thickness", "label": "Minimum ice thickness (m)", "kind": "number", "default": 1 },
+        { "name": "start", "label": "First time step", "kind": "number", "default": 0 },
+        { "name": "end", "label": "Last time step (empty: the last)", "kind": "number" },
+        { "name": "step", "label": "Time step interval", "kind": "number", "default": 1 },
+        { "name": "use_time_window", "label": "Moving time window", "kind": "bool", "default": false },
+        { "name": "window_size", "label": "Window size (time steps)", "kind": "number", "default": 5 },
+        { "name": "use_accumulative", "label": "Window maximum instead of mean", "kind": "bool", "default": false },
+        { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
+    },
+    {
+      "id": "afda",
+      "name": "Flow Direction (AFDA)",
+      "summary": "Compares the modelled ice flow direction with mapped flow lineations at each time step: mean angular difference, vector strength, and the shares of normal, frozen-bed and ice-free cells.",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "lineations", "label": "Flow lineations", "kind": "vectorLayer", "required": true, "help": "Lines drawn in the direction of ice flow, from start to end." },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "u_var", "label": "U velocity variable", "kind": "text", "default": "uvelbase" },
+        { "name": "v_var", "label": "V velocity variable", "kind": "text", "default": "vvelbase" },
+        { "name": "ice_var", "label": "Ice variable", "kind": "text", "default": "thk" },
+        { "name": "ice_type", "label": "Ice variable type", "kind": "choice", "choices": ["thickness", "fraction", "mask"], "default": "thickness" },
+        { "name": "ice_threshold", "label": "Ice threshold", "kind": "number", "default": 0.5, "help": "Cells whose ice variable is at least this have ice (thickness or fraction)." },
+        { "name": "velocity_threshold", "label": "Velocity threshold (m/a)", "kind": "number", "default": 1, "help": "Ice slower than this is treated as a frozen bed." },
+        { "name": "cell_size", "label": "Cell size (m)", "kind": "number", "default": 500 },
+        { "name": "start", "label": "First time step", "kind": "number", "default": 0 },
+        { "name": "end", "label": "Last time step (empty: the last)", "kind": "number" },
+        { "name": "step", "label": "Time step interval", "kind": "number", "default": 1 },
+        { "name": "use_time_window", "label": "Moving time window", "kind": "bool", "default": false },
+        { "name": "window_size", "label": "Window size (time steps)", "kind": "number", "default": 5 },
+        { "name": "use_accumulative_ice", "label": "Accumulative ice in the window", "kind": "bool", "default": true },
+        { "name": "save_rasters", "label": "Save model flow rasters", "kind": "bool", "default": false },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
+    },
+    {
+      "id": "apca",
+      "name": "Ice Margin Offset (APCA)",
+      "summary": "Compares the modelled ice margin with mapped ice margin features (moraines) at each time step: the mean offset between them, and the time step that matches best.",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "margin", "label": "Mapped ice margin", "kind": "vectorLayer", "required": true, "help": "Lines or polygons of the mapped ice margin, such as moraines." },
+        { "name": "id_field", "label": "ID field", "kind": "field" },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "ice_variable", "label": "Ice thickness variable", "kind": "text", "default": "thk" },
+        { "name": "ice_threshold", "label": "Ice threshold", "kind": "number", "default": 0.5 },
+        { "name": "min_ice_thickness", "label": "Minimum ice thickness (m)", "kind": "number", "default": 1 },
+        { "name": "cell_size", "label": "Cell size (m)", "kind": "number", "default": 500 },
+        { "name": "start", "label": "First time step", "kind": "number", "default": 0 },
+        { "name": "end", "label": "Last time step (empty: the last)", "kind": "number" },
+        { "name": "step", "label": "Time step interval", "kind": "number", "default": 1 },
+        { "name": "use_accumulative_ice", "label": "Accumulative ice", "kind": "bool", "default": true },
+        { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
+        { "name": "save_shapefiles", "label": "Save ice outline shapefiles", "kind": "bool", "default": true },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
+    },
+    {
+      "id": "lala",
+      "name": "Lineation Likelihood (LALA)",
+      "summary": "How likely a simulation is, given mapped flow lineations: whether ice could have formed each lineation where it is, flowing its way (Archer et al., 2023).",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "lineations", "label": "Mapped flow lineations", "kind": "vectorLayer", "required": true, "help": "Line features, one per lineation." },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "u_var", "label": "U-velocity variable", "kind": "text", "default": "uvelbase" },
+        { "name": "v_var", "label": "V-velocity variable", "kind": "text", "default": "vvelbase" },
+        { "name": "thk_var", "label": "Ice thickness variable", "kind": "text", "default": "thk" },
+        { "name": "mask_var", "label": "Mask variable", "kind": "text", "default": "mask" },
+        { "name": "grounded_ice", "label": "Grounded ice mask value", "kind": "number", "default": 2 },
+        { "name": "thk_threshold", "label": "Minimum ice thickness (m)", "kind": "number", "default": 10 },
+        { "name": "velocity_threshold", "label": "Minimum velocity (m/a)", "kind": "number", "default": 1 },
+        { "name": "kappa", "label": "Kappa (von Mises concentration)", "kind": "number", "default": 10 },
+        { "name": "p_value", "label": "p value", "kind": "number", "default": 0.01 },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
     }
   ]
 }

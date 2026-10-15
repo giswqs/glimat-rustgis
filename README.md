@@ -12,7 +12,7 @@ GLIMAT validates glacier and ice sheet model output (NetCDF) against geomorpholo
 
 ## Status
 
-Work in progress. Done: **APOA** (Polygon Overlap). Next: STPC, APCA, AFDA and LALA, each checked against the QGIS plugin on the [GLIMAT test dataset](https://zenodo.org/records/22836601).
+All of GLIMAT's tools are ported: APOA, STPC, APCA, AFDA and LALA, and the raster to NetCDF converter. On the [GLIMAT test dataset](https://zenodo.org/records/22836601) (a 1.87 GB model with 338 time steps), each tool's results match those of GLIMAT's own code run as its QGIS dialog runs it, to floating-point precision.
 
 The plugin is a RustGIS **process plugin**: RustGIS runs `main.py` with Python, which runs GLIMAT's own code in `glimat/` (unchanged from GLIMAT v1.0.0) and hands the results back as layers and tables. That lets it read model output of any size in place, as the QGIS plugin does. It needs a RustGIS with [process plugins](https://github.com/opengeos/RustGIS/issues/241), on the desktop or the command line.
 
@@ -26,20 +26,26 @@ For development, `GLIMAT_PYTHON` names another interpreter to run GLIMAT with, s
 
 ## Tools
 
-The tools are in the **Tools** pane under **Plugins › GLIMAT**.
+The tools are in the **Tools** pane under **Plugins › GLIMAT**. Each one reads the model output (NetCDF) in place by its path, and reprojects the mapped data, a RustGIS layer, to the model's coordinate system. That system is read from the NetCDF, or given as **Model coordinate system** (an EPSG code). The options match the QGIS plugin's. GLIMAT's own CSV files, summaries and plots go to an output folder, by default `<model>_glimat_<tool>` beside the model.
 
-### Polygon Overlap (APOA)
+| Tool | Compares | Gives back in RustGIS |
+|---|---|---|
+| **Polygon Overlap (APOA)** | modelled ice extent with a mapped extent polygon: F1-score, IoU, precision, recall | a metrics table per time step, the best-matching modelled ice as a layer |
+| **Point Comparison (STPC)** | modelled surface elevation or thickness with measured points: RMSE, MAE, mean difference, R² | a metrics table per time step, the points with modelled and measured values at the best time step |
+| **Ice Margin Offset (APCA)** | the modelled ice margin with mapped margins (moraines): mean offset and its trend | an offsets table per time step, the best match's offsets per feature, the best-matching modelled outline as a layer |
+| **Flow Direction (AFDA)** | modelled flow direction with mapped flow lineations: angular statistics | a statistics table per time step, with the best agreement in the messages |
+| **Lineation Likelihood (LALA)** | how likely the simulation is, given the lineations' locations and directions | the lineations' midpoints with their scores as a layer, a summary table |
+| **Rasters to NetCDF** | (converts) folders of GeoTIFF or ASCII grid rasters, one per time step, into one NetCDF | the NetCDF written, ready for the other tools |
 
-Compares the modelled ice extent (cells with ice thickness at or above a minimum) with a mapped ice extent polygon at each time step, and reports F1-score, IoU, precision and recall.
+### Notes on GLIMAT's numbers
 
-- **Model output (NetCDF path)**: the model's NetCDF, read in place.
-- **Mapped ice extent**: a polygon layer in RustGIS. It's reprojected to the model's coordinate system, which is read from the NetCDF, or given as **Model coordinate system** (an EPSG code).
-- **ID field**: compares each ID's polygons separately.
-- Time steps, a moving time window and the other options work as in the QGIS plugin.
+The port reproduces GLIMAT v1.0.0's results exactly, including these behaviours of GLIMAT's own code:
 
-Results: an **APOA metrics** table (one row per time step and ID), the best-matching modelled ice extent as a layer, and the best scores in the run's messages. GLIMAT's CSV files, summary and plots are written to the output folder (by default `<model>_glimat_apoa` beside the model).
-
-A note on the numbers: GLIMAT v1.0.0 positions the model grid by its outermost cell centres rather than its cell edges, so modelled polygons are offset by half a cell. The port reproduces GLIMAT's results exactly, offset included.
+- **APOA and APCA** position the model grid by its outermost cell centres rather than its edges, so modelled polygons and outlines are offset by half a cell.
+- **AFDA** counts frozen-bed and ice-free cells as 180° in its mean angular difference, so on most models the mean stays near 180° and the *normal alignment* share says more. GLIMAT names no best time step for AFDA; the port reports the one with the smallest mean angular difference.
+- **LALA** finds each lineation's grid row in a flipped y axis but reads the unflipped data. It also subtracts the lineation's direction (degrees clockwise from north) from the flow direction (radians anticlockwise from east). Both affect its scores.
+- **STPC** counts points with no ice (below the minimum thickness) or no data as a modelled value of 0.
+- **APCA** accepts an ice threshold but doesn't use it, and groups its results by time step even with an ID field.
 
 ## Development
 
