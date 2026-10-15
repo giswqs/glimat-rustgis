@@ -123,6 +123,27 @@
         { "name": "save_shapefiles", "label": "Save ice outline shapefiles", "kind": "bool", "default": true },
         { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
       ]
+    },
+    {
+      "id": "lala",
+      "name": "Lineation Likelihood (LALA)",
+      "summary": "How likely a simulation is, given mapped flow lineations: whether ice could have formed each lineation where it is, flowing its way (Archer et al., 2023).",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "lineations", "label": "Mapped flow lineations", "kind": "vectorLayer", "required": true, "help": "Line features, one per lineation." },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "u_var", "label": "U-velocity variable", "kind": "text", "default": "uvelbase" },
+        { "name": "v_var", "label": "V-velocity variable", "kind": "text", "default": "vvelbase" },
+        { "name": "thk_var", "label": "Ice thickness variable", "kind": "text", "default": "thk" },
+        { "name": "mask_var", "label": "Mask variable", "kind": "text", "default": "mask" },
+        { "name": "grounded_ice", "label": "Grounded ice mask value", "kind": "number", "default": 2 },
+        { "name": "thk_threshold", "label": "Minimum ice thickness (m)", "kind": "number", "default": 10 },
+        { "name": "velocity_threshold", "label": "Minimum velocity (m/a)", "kind": "number", "default": 1 },
+        { "name": "kappa", "label": "Kappa (von Mises concentration)", "kind": "number", "default": 10 },
+        { "name": "p_value", "label": "p value", "kind": "number", "default": 0.01 },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
     }
   ]
 }

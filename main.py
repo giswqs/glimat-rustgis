@@ -81,6 +81,7 @@ TOOLS = {
     "stpc": "stpc",
     "afda": "afda",
     "apca": "apca",
+    "lala": "lala",
 }
 
 
