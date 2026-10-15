@@ -1,0 +1,11 @@
+cftime
+geopandas
+matplotlib
+netCDF4
+numpy
+pandas
+pyproj
+rasterio
+scipy
+shapely
+xarray
