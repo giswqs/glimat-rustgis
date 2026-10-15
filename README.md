@@ -18,6 +18,18 @@ Work in progress. The plan:
 2. A RustGIS **process plugin** (`plugin.json` and `main.py`): each GLIMAT tool as a RustGIS geoprocessing tool, with results added to the map as layers and tables. Process plugins run GLIMAT's Python code as it is, which a sandboxed plugin can't do with model output of several GB. Needs [RustGIS process plugins](https://github.com/opengeos/RustGIS/issues/241).
 3. Results checked against the QGIS plugin on the [GLIMAT test dataset](https://zenodo.org/records/22836601).
 
+## Development
+
+Install the [pre-commit](https://pre-commit.com) hooks once, and they check each commit:
+
+```sh
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files   # check everything now
+```
+
+GLIMAT's own modules in `glimat/` are left out of the hooks, so they stay identical to the upstream release.
+
 ## Credits and licence
 
 GLIMAT is by Yingkui Li (University of Tennessee). The analysis code in `glimat/` is his, from [yingkui2003/glimat](https://github.com/yingkui2003/glimat), licensed under the GNU General Public License v3.0. This port is licensed under the same terms; see [LICENSE](LICENSE).

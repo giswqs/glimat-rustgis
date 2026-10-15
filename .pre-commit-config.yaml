@@ -1,0 +1,27 @@
+# GLIMAT's modules (glimat/*.py except __init__.py) and requirements-upstream.txt are kept
+# byte-identical to upstream (yingkui2003/glimat v1.0.0), so no hook rewrites them.
+exclude: ^(glimat/(afda|apca|lala|overlap_polygon|point_compare|raster_to_nc)\.py|requirements-upstream\.txt)$
+
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v6.0.0
+      hooks:
+          - id: check-toml
+          - id: check-yaml
+          - id: check-json
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
+          - id: requirements-txt-fixer
+          - id: check-added-large-files
+            args: ["--maxkb=500"]
+
+    - repo: https://github.com/psf/black-pre-commit-mirror
+      rev: 26.5.1
+      hooks:
+          - id: black
+
+    - repo: https://github.com/codespell-project/codespell
+      rev: v2.4.3
+      hooks:
+          - id: codespell
+            args: ["--ignore-words-list=wqs", "--skip=*.csv,*.geojson,*.json,*.nc"]
