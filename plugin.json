@@ -1,0 +1,39 @@
+{
+  "id": "glimat",
+  "name": "GLIMAT",
+  "version": "0.1.0",
+  "description": "Validates glacier and ice sheet model output (NetCDF) against geomorphological data: ice extent overlap, ice margins, flow lineations and point measurements. A port of the GLIMAT QGIS plugin by Yingkui Li.",
+  "author": "Yingkui Li (GLIMAT); RustGIS port by giswqs",
+  "homepage": "https://github.com/giswqs/glimat-rustgis",
+  "license": "GPL-3.0",
+  "abi": 1,
+  "runtime": "process",
+  "python": { "version": "3.12", "requirements": "requirements.txt" },
+  "run": ["python", "main.py"],
+  "permissions": ["files"],
+  "tools": [
+    {
+      "id": "apoa",
+      "name": "Polygon Overlap (APOA)",
+      "summary": "Compares modelled ice extent with a mapped ice extent polygon at each time step: F1-score, IoU, precision and recall.",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "field", "label": "Mapped ice extent", "kind": "polygonLayer", "required": true },
+        { "name": "id_field", "label": "ID field (one comparison per ID)", "kind": "field" },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "ice_variable", "label": "Ice thickness variable", "kind": "text", "default": "thk" },
+        { "name": "min_ice_thickness", "label": "Minimum ice thickness (m)", "kind": "number", "default": 1 },
+        { "name": "min_polygon_area_km2", "label": "Minimum polygon area (km²)", "kind": "number", "default": 0.01 },
+        { "name": "start", "label": "First time step", "kind": "number", "default": 0 },
+        { "name": "end", "label": "Last time step (empty: the last)", "kind": "number" },
+        { "name": "step", "label": "Time step interval", "kind": "number", "default": 1 },
+        { "name": "use_time_window", "label": "Moving time window", "kind": "bool", "default": false },
+        { "name": "window_size", "label": "Window size (time steps)", "kind": "number", "default": 5 },
+        { "name": "use_accumulative_ice", "label": "Accumulative ice in the window", "kind": "bool", "default": false },
+        { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
+    }
+  ]
+}
