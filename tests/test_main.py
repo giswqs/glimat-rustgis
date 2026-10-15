@@ -23,6 +23,21 @@ def run(request, cwd):
     Returns:
         A tuple of (log lines, the last message: ``{"ok": ...}`` or ``{"error": ...}``).
     """
+    messages = run_messages(request, cwd)
+    logs = [m["log"] for m in messages if "log" in m]
+    return logs, messages[-1]
+
+
+def run_messages(request, cwd):
+    """Runs ``main.py`` with ``request`` and returns every message it wrote.
+
+    Args:
+        request: The request, as RustGIS sends it.
+        cwd: The folder to run in.
+
+    Returns:
+        The messages, in order; the last is ``{"ok": ...}`` or ``{"error": ...}``.
+    """
     proc = subprocess.run(
         [sys.executable, str(MAIN)],
         input=json.dumps(request) + "\n",
@@ -31,9 +46,7 @@ def run(request, cwd):
         cwd=cwd,
         timeout=300,
     )
-    messages = [json.loads(line) for line in proc.stdout.splitlines() if line.strip()]
-    logs = [m["log"] for m in messages if "log" in m]
-    return logs, messages[-1]
+    return [json.loads(line) for line in proc.stdout.splitlines() if line.strip()]
 
 
 @pytest.fixture
@@ -133,6 +146,29 @@ def test_apoa_finds_the_matching_time_step(model, tmp_path):
         / "model_glimat_apoa_overlap_time_series.csv"
     )
     assert out.is_file()
+
+
+def test_glimat_output_shows_as_progress(model, tmp_path):
+    messages = run_messages(request(model), tmp_path)
+    progress = [m["progress"] for m in messages if "progress" in m]
+    # GLIMAT's lines, one by one, while it runs; not its rules or blank lines.
+    assert any("Time steps to analyze: 5" in p for p in progress), progress
+    assert all(any(c.isalnum() for c in p) and p == p.strip() for p in progress)
+    # The result keeps only the summary.
+    result = messages[-1]["ok"]
+    assert not set(progress) & set(result["messages"])
+
+
+def test_progress_reports_whole_lines(monkeypatch, capsys):
+    from rustgis_glimat import protocol
+
+    sent = []
+    monkeypatch.setattr(protocol, "send", sent.append)
+    out = protocol.Progress()
+    out.write("Time step ")
+    out.write("3 of 5\n" + "=" * 20 + "\n\n  10%\r  50%\rdone\nhalf")
+    assert sent == [{"progress": "Time step 3 of 5"}, {"progress": "done"}]
+    assert capsys.readouterr().err.startswith("Time step 3 of 5\n")
 
 
 def test_apoa_reports_bad_input_as_errors(model, tmp_path):
