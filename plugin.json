@@ -1,7 +1,7 @@
 {
   "id": "glimat",
   "name": "GLIMAT",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Validates glacier and ice sheet model output (NetCDF) against geomorphological data: ice extent overlap, ice margins, flow lineations and point measurements. A port of the GLIMAT QGIS plugin by Yingkui Li.",
   "author": "Yingkui Li (GLIMAT); RustGIS port by giswqs",
   "homepage": "https://github.com/giswqs/glimat-rustgis",

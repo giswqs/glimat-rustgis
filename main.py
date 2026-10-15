@@ -25,10 +25,10 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 # First, so the protocol keeps the real standard output; anything else printed (by GLIMAT or the
-# libraries it uses) goes to standard error, which RustGIS logs.
-from rustgis_glimat.protocol import send  # noqa: E402
+# libraries it uses) goes to standard error, which RustGIS logs, and shows as the tool's progress.
+from rustgis_glimat.protocol import Progress, send  # noqa: E402
 
-sys.stdout = sys.stderr
+sys.stdout = Progress()
 
 REQUIRED = {
     "numpy": "numpy",
