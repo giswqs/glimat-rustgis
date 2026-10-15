@@ -64,7 +64,7 @@ GLIMAT's own modules in `glimat/` are left out of the hooks, so they stay identi
 
 ## Releasing
 
-`python scripts/package.py` builds `dist/glimat-<version>.rgplugin` and prints its SHA-256; the same files always give the same package. To publish a release, set `version` in `plugin.json`, merge, and push the tag `v<version>`: CI runs the tests, builds the package and attaches it, with its SHA-256, to a GitHub release.
+`python scripts/package.py` builds `dist/glimat-<version>.rgplugin` and prints its SHA-256; the same files always give the same package, on any machine. To publish a release, set `version` in `plugin.json`, merge, and push the tag `v<version>`: CI runs the tests, builds the package and attaches it, with its SHA-256, to a GitHub release.
 
 ## Credits and licence
 

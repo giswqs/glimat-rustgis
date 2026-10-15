@@ -1,7 +1,9 @@
 """Builds the plugin package, ``dist/glimat-<version>.rgplugin``, for installing in RustGIS.
 
 A package is a zip archive with ``plugin.json`` at its root (see RustGIS's ``docs/plugins.md``).
-The archive is reproducible: the same files give the same bytes, and so the same SHA-256.
+The archive is reproducible: the same files give the same bytes, and so the same SHA-256, on any
+machine. Its files are stored uncompressed for that, since compressed bytes vary with the zlib
+build (they are a few hundred KB in all).
 
 Usage: ``python scripts/package.py [--out DIR]``. Prints the package's path and SHA-256.
 """
@@ -52,10 +54,9 @@ def build(out):
     manifest = json.loads((ROOT / "plugin.json").read_text(encoding="utf-8"))
     out.mkdir(parents=True, exist_ok=True)
     path = out / f"{manifest['id']}-{manifest['version']}.rgplugin"
-    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED) as z:
         for name in members():
             info = zipfile.ZipInfo(name, TIME)
-            info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             z.writestr(info, (ROOT / name).read_bytes())
     return path
