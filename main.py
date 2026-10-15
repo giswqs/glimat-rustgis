@@ -214,7 +214,7 @@ def model_crs(ds):
     """Reads the model grid's coordinate system from a NetCDF's metadata, if it says.
 
     Looks at the CF grid mapping of the variables (``crs_wkt``, ``spatial_ref``,
-    ``proj4_params``, ``epsg_code``), then at global attributes PISM and others write (``proj``,
+    ``proj4_params``, ``proj4``, ``epsg_code``), then at global attributes PISM and others write (``proj``,
     ``proj4``, ``crs``, ``epsg``).
 
     Args:
@@ -237,6 +237,7 @@ def model_crs(ds):
                     "spatial_ref",
                     "proj4_params",
                     "proj4text",
+                    "proj4",
                     "epsg_code",
                 )
             ]
