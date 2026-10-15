@@ -165,7 +165,7 @@ def table(df):
     Returns:
         A GeoJSON FeatureCollection dict.
     """
-    rows = json.loads(df.to_json(orient="records"))
+    rows = json.loads(df.to_json(orient="records", double_precision=15))
     return {
         "type": "FeatureCollection",
         "features": [
