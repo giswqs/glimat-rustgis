@@ -18,9 +18,11 @@ The plugin is a RustGIS **process plugin**: RustGIS runs `main.py` with Python, 
 
 ## Install
 
-1. Install GLIMAT's Python libraries (`pip install -r requirements.txt`, or with conda: `conda install -c conda-forge numpy pandas geopandas shapely rasterio xarray netcdf4 matplotlib pyproj scipy`).
-2. In RustGIS, open **Plugins › Plugin Manager › Settings** and add this folder as a plugin folder, or run `rustgis-cli plugins install /path/to/glimat-rustgis`.
-3. If those libraries aren't in the `python3` on your `PATH` (on Windows, `python`), set `GLIMAT_PYTHON` to the interpreter that has them, such as a conda environment's `python`.
+In RustGIS, open **Plugins › Plugin Manager › Settings** and add this folder as a plugin folder, or run `rustgis-cli plugins install /path/to/glimat-rustgis`.
+
+RustGIS then makes GLIMAT a Python environment of its own, with Python 3.12 and the packages in `requirements.txt`. The desktop app does it in the background and shows the progress in the Plugin Manager; `rustgis-cli` does it before the install returns. You don't need Python installed. The first time downloads about 600 MB. This needs a RustGIS with [plugin Python environments](https://github.com/opengeos/RustGIS/pull/246).
+
+For development, `GLIMAT_PYTHON` names another interpreter to run GLIMAT with, such as a conda environment's `python` that has the packages in `requirements.txt`.
 
 ## Tools
 

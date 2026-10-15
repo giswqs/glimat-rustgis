@@ -8,7 +8,8 @@
   "license": "GPL-3.0",
   "abi": 1,
   "runtime": "process",
-  "run": { "windows": ["python", "main.py"], "default": ["python3", "main.py"] },
+  "python": { "version": "3.12", "requirements": "requirements.txt" },
+  "run": ["python", "main.py"],
   "permissions": ["files"],
   "tools": [
     {
