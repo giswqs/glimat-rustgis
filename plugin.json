@@ -34,6 +34,23 @@
         { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
         { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
       ]
+    },
+    {
+      "id": "raster-to-nc",
+      "name": "Rasters to NetCDF",
+      "summary": "Converts folders of GeoTIFF or ASCII grid rasters, one per time step, into one NetCDF model output for GLIMAT's tools.",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "thick_folder", "label": "Ice thickness rasters (folder)", "kind": "text", "required": true, "help": "A folder of .tif or .asc files, one per time step, with the time in each name (thk_1000.tif)." },
+        { "name": "output_nc", "label": "Output NetCDF (path)", "kind": "text", "required": true },
+        { "name": "surface_folder", "label": "Surface elevation rasters (folder)", "kind": "text" },
+        { "name": "uvel_folder", "label": "U velocity rasters (folder)", "kind": "text" },
+        { "name": "vvel_folder", "label": "V velocity rasters (folder)", "kind": "text" },
+        { "name": "start", "label": "First time (empty: from the files)", "kind": "number" },
+        { "name": "end", "label": "Last time (empty: from the files)", "kind": "number" },
+        { "name": "step", "label": "Time interval (empty: from the files)", "kind": "number" },
+        { "name": "use_compression", "label": "Compress", "kind": "bool", "default": true }
+      ]
     }
   ]
 }
