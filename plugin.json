@@ -34,6 +34,32 @@
         { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
         { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
       ]
+    },
+    {
+      "id": "afda",
+      "name": "Flow Direction (AFDA)",
+      "summary": "Compares the modelled ice flow direction with mapped flow lineations at each time step: mean angular difference, vector strength, and the shares of normal, frozen-bed and ice-free cells.",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "lineations", "label": "Flow lineations", "kind": "vectorLayer", "required": true, "help": "Lines drawn in the direction of ice flow, from start to end." },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "u_var", "label": "U velocity variable", "kind": "text", "default": "uvelbase" },
+        { "name": "v_var", "label": "V velocity variable", "kind": "text", "default": "vvelbase" },
+        { "name": "ice_var", "label": "Ice variable", "kind": "text", "default": "thk" },
+        { "name": "ice_type", "label": "Ice variable type", "kind": "choice", "choices": ["thickness", "fraction", "mask"], "default": "thickness" },
+        { "name": "ice_threshold", "label": "Ice threshold", "kind": "number", "default": 0.5, "help": "Cells whose ice variable is at least this have ice (thickness or fraction)." },
+        { "name": "velocity_threshold", "label": "Velocity threshold (m/a)", "kind": "number", "default": 1, "help": "Ice slower than this is treated as a frozen bed." },
+        { "name": "cell_size", "label": "Cell size (m)", "kind": "number", "default": 500 },
+        { "name": "start", "label": "First time step", "kind": "number", "default": 0 },
+        { "name": "end", "label": "Last time step (empty: the last)", "kind": "number" },
+        { "name": "step", "label": "Time step interval", "kind": "number", "default": 1 },
+        { "name": "use_time_window", "label": "Moving time window", "kind": "bool", "default": false },
+        { "name": "window_size", "label": "Window size (time steps)", "kind": "number", "default": 5 },
+        { "name": "use_accumulative_ice", "label": "Accumulative ice in the window", "kind": "bool", "default": true },
+        { "name": "save_rasters", "label": "Save model flow rasters", "kind": "bool", "default": false },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
     }
   ]
 }
