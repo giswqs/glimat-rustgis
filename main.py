@@ -75,7 +75,7 @@ def check_libraries():
 
 
 # The tools: their ids in plugin.json, and the modules in rustgis_glimat/ that run them.
-TOOLS = {"apoa": "apoa"}
+TOOLS = {"apoa": "apoa", "apca": "apca"}
 
 
 def main():

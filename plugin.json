@@ -34,6 +34,29 @@
         { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
         { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
       ]
+    },
+    {
+      "id": "apca",
+      "name": "Ice Margin Offset (APCA)",
+      "summary": "Compares the modelled ice margin with mapped ice margin features (moraines) at each time step: the mean offset between them, and the time step that matches best.",
+      "toolbox": "GLIMAT",
+      "params": [
+        { "name": "model", "label": "Model output (NetCDF path)", "kind": "text", "required": true, "help": "The model output file, such as a PISM run. It's read in place, so it can be any size." },
+        { "name": "margin", "label": "Mapped ice margin", "kind": "vectorLayer", "required": true, "help": "Lines or polygons of the mapped ice margin, such as moraines." },
+        { "name": "id_field", "label": "ID field", "kind": "field" },
+        { "name": "crs", "label": "Model coordinate system", "kind": "text", "help": "EPSG code or WKT of the model grid. Leave empty to read it from the NetCDF." },
+        { "name": "ice_variable", "label": "Ice thickness variable", "kind": "text", "default": "thk" },
+        { "name": "ice_threshold", "label": "Ice threshold", "kind": "number", "default": 0.5 },
+        { "name": "min_ice_thickness", "label": "Minimum ice thickness (m)", "kind": "number", "default": 1 },
+        { "name": "cell_size", "label": "Cell size (m)", "kind": "number", "default": 500 },
+        { "name": "start", "label": "First time step", "kind": "number", "default": 0 },
+        { "name": "end", "label": "Last time step (empty: the last)", "kind": "number" },
+        { "name": "step", "label": "Time step interval", "kind": "number", "default": 1 },
+        { "name": "use_accumulative_ice", "label": "Accumulative ice", "kind": "bool", "default": true },
+        { "name": "save_plots", "label": "Save plots", "kind": "bool", "default": true },
+        { "name": "save_shapefiles", "label": "Save ice outline shapefiles", "kind": "bool", "default": true },
+        { "name": "output_folder", "label": "Output folder (empty: beside the model)", "kind": "text" }
+      ]
     }
   ]
 }
