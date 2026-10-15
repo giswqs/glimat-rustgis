@@ -1,0 +1,79 @@
+# Tests the plugin and builds its package. A tag v<version> (matching plugin.json's version)
+# also publishes the package as a GitHub release.
+name: CI
+
+on:
+    push:
+        branches: [main]
+        tags: ["v*"]
+    pull_request:
+
+permissions:
+    contents: read
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-python@v6
+              with:
+                  python-version: "3.12"
+                  cache: pip
+                  cache-dependency-path: requirements.txt
+            - run: pip install -r requirements.txt pytest
+            - run: pytest -q tests
+
+    package:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-python@v6
+              with:
+                  python-version: "3.12"
+            - name: Build the package
+              run: python scripts/package.py | tee package.txt
+            - name: Check the package
+              run: |
+                  python - <<'EOF'
+                  import json, zipfile
+                  from pathlib import Path
+                  pkg = Path(open("package.txt").read().split()[0])
+                  with zipfile.ZipFile(pkg) as z:
+                      names = set(z.namelist())
+                      manifest = json.loads(z.read("plugin.json"))
+                  for need in ["main.py", manifest["python"]["requirements"], "rustgis_glimat/protocol.py"]:
+                      assert need in names, need
+                  assert not any(n.startswith("tests/") for n in names)
+                  assert pkg.stat().st_size < 64 * 1024 * 1024
+                  print(f"{pkg.name}: {len(names)} files, {pkg.stat().st_size} bytes")
+                  EOF
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: rgplugin
+                  path: dist/*.rgplugin
+
+    release:
+        if: startsWith(github.ref, 'refs/tags/v')
+        needs: [test, package]
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/download-artifact@v5
+              with:
+                  name: rgplugin
+                  path: dist
+            - name: Check the tag matches plugin.json
+              run: |
+                  version=$(python -c "import json; print(json.load(open('plugin.json'))['version'])")
+                  test "${GITHUB_REF_NAME}" = "v${version}" || { echo "tag ${GITHUB_REF_NAME} but plugin.json says ${version}"; exit 1; }
+            - name: Publish the release
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  cd dist
+                  sha256sum *.rgplugin > SHA256SUMS
+                  gh release create "${GITHUB_REF_NAME}" *.rgplugin SHA256SUMS \
+                      --title "GLIMAT ${GITHUB_REF_NAME}" --generate-notes
