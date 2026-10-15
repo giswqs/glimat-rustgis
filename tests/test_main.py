@@ -160,6 +160,7 @@ def test_glimat_output_shows_as_progress(model, tmp_path):
 
 
 def test_progress_reports_whole_lines(monkeypatch, capsys):
+    monkeypatch.syspath_prepend(str(MAIN.parent))
     from rustgis_glimat import protocol
 
     sent = []
