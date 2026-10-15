@@ -57,6 +57,8 @@ def build(out):
     with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED) as z:
         for name in members():
             info = zipfile.ZipInfo(name, TIME)
+            # Unix, whatever builds it (zipfile records the building system).
+            info.create_system = 3
             info.external_attr = 0o644 << 16
             z.writestr(info, (ROOT / name).read_bytes())
     return path
