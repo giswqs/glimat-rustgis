@@ -10,6 +10,8 @@ GLIMAT validates glacier and ice sheet model output (NetCDF) against geomorpholo
 - **APOA**, Automated Polygon Overlap Analysis: F1, IoU, precision and recall of ice extent.
 - **STPC**, Surface/Thickness Point Comparison: RMSE, MAE and R² at measured points.
 
+![APOA in RustGIS: the modelled ice extent that best matches the mapped LGM extent, at time step 237](docs/images/apoa-result.webp)
+
 ## Status
 
 All of GLIMAT's tools are ported: APOA, STPC, APCA, AFDA and LALA, and the raster to NetCDF converter. On the [GLIMAT test dataset](https://zenodo.org/records/22836601) (a 1.87 GB model with 338 time steps), each tool's results match those of GLIMAT's own code run as its QGIS dialog runs it, to floating-point precision.
@@ -20,15 +22,19 @@ The plugin is a RustGIS **process plugin**: RustGIS runs `main.py` with Python, 
 
 Download `glimat-<version>.rgplugin` from the [releases](https://github.com/giswqs/glimat-rustgis/releases) and drop it on the RustGIS window, or install it in **Plugins › Plugin Manager › Settings**, or run `rustgis-cli plugins install glimat-<version>.rgplugin`. RustGIS asks before installing it, since it runs as a program on your computer rather than in RustGIS's sandbox.
 
+![RustGIS asks before installing GLIMAT: it isn't sandboxed, and installing it downloads Python and its packages](docs/images/install.webp)
+
 To run it from a clone instead, add the clone's folder as a plugin folder in **Plugin Manager › Settings**, or run `rustgis-cli plugins install /path/to/glimat-rustgis`.
 
 RustGIS then makes GLIMAT a Python environment of its own, with Python 3.12 and the packages in `requirements.txt`. The desktop app does it in the background and shows the progress in the Plugin Manager; `rustgis-cli` does it before the install returns. You don't need Python installed. The first time downloads about 600 MB. This needs a RustGIS with [plugin Python environments](https://github.com/opengeos/RustGIS/pull/246).
+
+![GLIMAT installed: its Python environment is ready, and its tools are on the Plugins tab](docs/images/installed.webp)
 
 For development, `GLIMAT_PYTHON` names another interpreter to run GLIMAT with, such as a conda environment's `python` that has the packages in `requirements.txt`.
 
 ## Tools
 
-The tools are in the **Tools** pane under **Plugins › GLIMAT**. Each one reads the model output (NetCDF) in place by its path, and reprojects the mapped data, a RustGIS layer, to the model's coordinate system. That system is read from the NetCDF, or given as **Model coordinate system** (an EPSG code). The options match the QGIS plugin's. GLIMAT's own CSV files, summaries and plots go to an output folder, by default `<model>_glimat_<tool>` beside the model. While a tool runs, the Tools pane shows what GLIMAT is doing, such as the time step it is on (with a RustGIS that has [progress messages](https://github.com/opengeos/RustGIS/pull/279)); GLIMAT's full output is in RustGIS's log.
+The tools are in the **Tools** pane under **Plugins › GLIMAT**. Each one reads the model output (NetCDF) in place by its path, and reprojects the mapped data, a RustGIS layer, to the model's coordinate system. That system is read from the NetCDF, or given as **Model coordinate system** (an EPSG code). The options match the QGIS plugin's. GLIMAT's own CSV files, summaries and plots go to an output folder, by default `<model>_glimat_<tool>` beside the model.
 
 | Tool | Compares | Gives back in RustGIS |
 |---|---|---|
@@ -38,6 +44,20 @@ The tools are in the **Tools** pane under **Plugins › GLIMAT**. Each one reads
 | **Flow Direction (AFDA)** | modelled flow direction with mapped flow lineations: angular statistics | a statistics table per time step, with the best agreement in the messages |
 | **Lineation Likelihood (LALA)** | how likely the simulation is, given the lineations' locations and directions | the lineations' midpoints with their scores as a layer, a summary table |
 | **Rasters to NetCDF** | (converts) folders of GeoTIFF or ASCII grid rasters, one per time step, into one NetCDF | the NetCDF written, ready for the other tools |
+
+A tool runs in the background, so the map stays usable. The Tools pane shows the line GLIMAT last printed, such as the time step it is on, and a **Cancel** button (this needs a RustGIS with [progress messages](https://github.com/opengeos/RustGIS/pull/279)). GLIMAT's full output is in RustGIS's log.
+
+![APOA running: the Tools pane shows GLIMAT's progress, time step by time step, and Cancel](docs/images/running.webp)
+
+The results come back as layers and tables. APOA's metrics table has a row per time step:
+
+![The APOA metrics table: F1-score, IoU, precision, recall and areas for each of the model's 338 time steps](docs/images/apoa-metrics.webp)
+
+STPC adds the measured points with the modelled values at the best time step:
+
+![STPC: the best match is time step 248, with an RMSE of 29.18 m at 275 measured thickness points](docs/images/stpc-result.webp)
+
+The screenshots use the [GLIMAT test dataset](https://zenodo.org/records/22836601) on Esri's World Hillshade.
 
 ### Notes on GLIMAT's numbers
 
