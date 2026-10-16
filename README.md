@@ -34,7 +34,7 @@ For development, `GLIMAT_PYTHON` names another interpreter to run GLIMAT with, s
 
 ## Tools
 
-The tools are in the **Tools** pane under **Plugins › GLIMAT**. Each one reads the model output (NetCDF) in place by its path, and reprojects the mapped data, a RustGIS layer, to the model's coordinate system. That system is read from the NetCDF, or given as **Model coordinate system** (an EPSG code). The options match the QGIS plugin's. GLIMAT's own CSV files, summaries and plots go to an output folder, by default `<model>_glimat_<tool>` beside the model. While a tool runs, the Tools pane shows what GLIMAT is doing, such as the time step it is on (with a RustGIS that has [progress messages](https://github.com/opengeos/RustGIS/pull/279)); GLIMAT's full output is in RustGIS's log.
+The tools are in the **Tools** pane under **Plugins › GLIMAT**. Each one reads the model output (NetCDF) in place by its path, and reprojects the mapped data, a RustGIS layer, to the model's coordinate system. That system is read from the NetCDF, or given as **Model coordinate system** (an EPSG code). The options match the QGIS plugin's. GLIMAT's own CSV files, summaries and plots go to an output folder, by default `<model>_glimat_<tool>` beside the model.
 
 | Tool | Compares | Gives back in RustGIS |
 |---|---|---|
@@ -45,7 +45,7 @@ The tools are in the **Tools** pane under **Plugins › GLIMAT**. Each one reads
 | **Lineation Likelihood (LALA)** | how likely the simulation is, given the lineations' locations and directions | the lineations' midpoints with their scores as a layer, a summary table |
 | **Rasters to NetCDF** | (converts) folders of GeoTIFF or ASCII grid rasters, one per time step, into one NetCDF | the NetCDF written, ready for the other tools |
 
-A tool runs in the background, so the map stays usable. The Tools pane shows the line GLIMAT last printed, such as the time step it is on, and a **Cancel** button:
+A tool runs in the background, so the map stays usable. The Tools pane shows the line GLIMAT last printed, such as the time step it is on, and a **Cancel** button (this needs a RustGIS with [progress messages](https://github.com/opengeos/RustGIS/pull/279)). GLIMAT's full output is in RustGIS's log.
 
 ![APOA running: the Tools pane shows GLIMAT's progress, time step by time step, and Cancel](docs/images/running.webp)
 
